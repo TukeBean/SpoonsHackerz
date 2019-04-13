@@ -1,0 +1,35 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import sklearn.metrics
+from pprint import pprint
+
+#import and view dataset
+! git clone https://github.com/TukeBean/SpoonsHackerz.git
+realdata = pd.read_csv("/content/SpoonsHackerz/dataset/real_reviews.txt",header=None,delimiter="\t",names=["real"])
+fakedata = pd.read_csv("/content/SpoonsHackerz/dataset/fake_reviews.txt",header=None,delimiter="\t",names=["fake"])
+concat = pd.concat([realdata,fakedata], axis=1)
+
+concat.to_csv("/content/SpoonsHackerz/dataset/concatenated.csv")
+concatdata = pd.read_csv("/content/SpoonsHackerz/dataset/concatenated.csv")
+concatdata.head(10)
+
+from sklearn.model_selection import train_test_split
+
+concatdata['realData'] = concatdata['real'].factorize()[0]
+concatdata['fakeData'] = concatdata['fake'].factorize()[0]
+
+x = concatdata['realData']
+
+y = concatdata['fakeData']
+
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 50)
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+model = KNeighborsClassifier(n_neighbors=7)
+
+# Train the model using the training sets
+model.fit(X_train,y_train)
